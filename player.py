@@ -30,8 +30,6 @@ class Player:
         self.gold = self.max_gold
         self.tavern.next_turn()
         self.board.trigger_start_turn()
-        if self.tavern.is_frozen:
-            self.tavern.is_frozen = False
 
     def buy_minion(self, tavern_index):
         if self.gold < 3 or tavern_index >= len(self.tavern.minions) or len(self.hand.minions) >= 10:
