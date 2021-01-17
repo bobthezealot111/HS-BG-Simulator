@@ -46,3 +46,11 @@ class Game:
             if chosen <= sum:
                 return self.get_minion_class(key)
         return False
+
+    def remove_minion_from_pool(self, minion):
+        self.minion_pool[minion.name] -= 1
+        if self.minion_pool[minion.name] < 0:
+            self.minion_pool[minion.name] = 0
+
+    def add_minion_to_pool(self, minion):
+        self.minion_pool[minion.name] += 1

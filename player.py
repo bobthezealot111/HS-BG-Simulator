@@ -16,7 +16,7 @@ class Player:
         self.free_refreshs = 0
 
     def print_summary(self):
-        print(f"Turn {self.turn}; Tavern {self.tavern.tier}" + (" frozen" if self.tavern.is_frozen else "") + f"; {self.gold}/{self.max_gold} gold")
+        print(f"Turn {self.turn}; {self.gold}/{self.max_gold} gold; Tavern {self.tavern.tier}" + (" frozen" if self.tavern.is_frozen else "") + (f", {self.tavern.upgrade_cost} gold upgrade" if self.tavern.tier < 6 else ""))
         print("Tavern: " + ", ".join([str(minion) for minion in self.tavern.minions]))
         print("Board: " + ", ".join([str(minion) for minion in self.board.minions]))
         print("Hand: " + ", ".join([str(minion) for minion in self.hand.minions]))
@@ -30,8 +30,8 @@ class Player:
         self.gold = self.max_gold
         self.tavern.next_turn()
         self.board.trigger_start_turn()
-        if self.is_frozen:
-            self.is_frozen = False
+        if self.tavern.is_frozen:
+            self.tavern.is_frozen = False
 
     def buy_minion(self, tavern_index):
         if self.gold < 3 or tavern_index >= len(self.tavern.minions) or len(self.hand.minions) >= 10:
@@ -39,6 +39,7 @@ class Player:
         minion = self.tavern.remove_minion(tavern_index)
         self.gold -= 3
         self.hand.add_minion(minion)
+        self.game.remove_minion_from_pool(minion)
 
     def play_minion(self, hand_index):
         if hand_index >= len(self.hand.minions) or len(self.board.minions) >= 7:
@@ -56,6 +57,7 @@ class Player:
         if self.gold > 10:
             self.gold = 10
         minion.sell()
+        self.game.add_minion_to_pool(minion)
 
     def reorder_minion(self, board_index, new_board_index):
         if board_index >= len(self.board.minions) or new_board_index >= len(self.board.minions):
@@ -73,6 +75,12 @@ class Player:
 
     def toggle_freeze(self):
         self.tavern.toggle_freeze()
+
+    def upgrade_tavern(self):
+        if self.gold < self.tavern.upgrade_cost or self.tavern.tier >= 6:
+            return False
+        self.gold -= self.tavern.upgrade_cost
+        self.tavern.upgrade()
 
     def take_damage(self, damage):
         self.health -= damage

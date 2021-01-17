@@ -15,6 +15,8 @@ while True:
         player.refresh()
     elif split[0] == "freeze" or split[0] == "f":
         player.toggle_freeze()
+    elif split[0] == "upgrade" or split[0] == "u":
+        player.upgrade_tavern()
     elif split[0] == "next" or split[0] == "end" or split[0] == "n":
         player.next_turn()
 

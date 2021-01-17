@@ -2,8 +2,8 @@ from minion import *
 
 class Tavern:
     # Index is tier, index 0 is undefined
-    tavern_sizes = [None, 3, 4, 5, 6, 7]
-    upgrade_base_costs = [None, 5, 7, 8, 9, 10]
+    tavern_sizes = [None, 3, 4, 5, 6, 7, 8]
+    upgrade_base_costs = [None, 5, 7, 8, 9, 10, None]
 
     def __init__(self, player):
         self.player = player
@@ -22,9 +22,10 @@ class Tavern:
         return self.player.game.random_minion_from_pool(self.player.game.get_minion_pool(1, self.tier))(self.player)
 
     def next_turn(self):
-        self.upgrade_cost -= 1
-        if self.upgrade_cost < 0:
-            self.upgrade_cost = 0
+        if self.tier < 6:
+            self.upgrade_cost -= 1
+            if self.upgrade_cost < 0:
+                self.upgrade_cost = 0
         if not self.is_frozen:
             self.refresh()
 
@@ -34,3 +35,7 @@ class Tavern:
 
     def toggle_freeze(self):
         self.is_frozen = not self.is_frozen
+
+    def upgrade(self):
+        self.tier += 1
+        self.upgrade_cost = self.upgrade_base_costs[self.tier]
