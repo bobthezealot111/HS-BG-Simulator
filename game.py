@@ -71,4 +71,5 @@ class Game:
             self.minion_pool[minion.name] = 0
 
     def add_minion_to_pool(self, minion):
-        self.minion_pool[minion.name] += 1
+        if minion.name in self.minion_pool:
+            self.minion_pool[minion.name] += 1

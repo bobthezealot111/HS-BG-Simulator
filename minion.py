@@ -1,5 +1,10 @@
+import random
+
 class Minion:
     in_tavern = True
+    taunt = False
+    reborn = False
+    divine_shield = False
 
     def __init__(self, player):
         self.player = player
@@ -82,6 +87,8 @@ class Vulgar_Homunculus(Minion):
     base_attack = 2
     base_health = 4
 
+    taunt = True
+
     def __init__(self, player):
         super().__init__(player)
 
@@ -112,6 +119,8 @@ class Dragonspawn_Lieutenant(Minion):
     type = "Dragon"
     base_attack = 2
     base_health = 3
+
+    taunt = True
 
     def __init__(self, player):
         super().__init__(player)
@@ -153,7 +162,7 @@ class Sellemental(Minion):
 
     def sell(self):
         super().sell()
-        self.hand.add_minion(Water_Droplet(player))
+        self.player.hand.add_minion(Water_Droplet(player))
 
 class Water_Droplet(Minion):
     name = "Water Droplet"
@@ -188,8 +197,22 @@ class Micro_Mummy(Minion):
     base_attack = 1
     base_health = 2
 
+    reborn = True
+
     def __init__(self, player):
         super().__init__(player)
+
+    def end_turn(self):
+        super().end_turn()
+        chosen_minion = None
+        if len(self.player.board.minions) > 1:
+            while True:
+                if chosen_minion == None or chosen_minion == self:
+                    chosen_minion = random.choice(self.player.board.minions)
+                else:
+                    break
+        if chosen_minion != None:
+            chosen_minion.attack += 1
 
 class Murloc_Tidecaller(Minion):
     name = "Murloc Tidecaller"
@@ -248,7 +271,13 @@ class Deck_Swabbie(Minion):
     type = "Pirate"
     base_attack = 2
     base_health = 2
-    
+
+    def battlecry(self):
+        super().battlecry()
+        self.player.tavern.upgrade_cost -= 1
+        if self.player.tavern.upgrade_cost < 0:
+            self.player.tavern.upgrade_cost = 0
+
     def __init__(self, player):
         super().__init__(player)
 
@@ -268,6 +297,9 @@ class Acolyte_of_CThun(Minion):
     type = "None"
     base_attack = 2
     base_health = 2
+
+    taunt = True
+    reborn = True
 
     def __init__(self, player):
         super().__init__(player)
