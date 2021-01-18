@@ -16,7 +16,7 @@ class Player:
         self.free_refreshs = 0
 
     def print_summary(self):
-        print(f"Turn {self.turn}; {self.gold}/{self.max_gold} gold; Tavern {self.tavern.tier}" + (" frozen" if self.tavern.is_frozen else "") + (f", {self.tavern.upgrade_cost} gold upgrade" if self.tavern.tier < 6 else ""))
+        print(f"Turn {self.turn}; {self.gold}/{self.max_gold} gold; Tavern {self.tavern.tier}" + (f" {len(self.tavern.frozen_minions)}/{len(self.tavern.minions)} frozen" if len(self.tavern.frozen_minions) > 0 else "") + (f", {self.tavern.upgrade_cost} gold upgrade" if self.tavern.tier < 6 else ""))
         print("Tavern: " + ", ".join([str(minion) for minion in self.tavern.minions]))
         print("Board: " + ", ".join([str(minion) for minion in self.board.minions]))
         print("Hand: " + ", ".join([str(minion) for minion in self.hand.minions]))

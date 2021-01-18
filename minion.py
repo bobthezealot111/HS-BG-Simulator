@@ -248,7 +248,7 @@ class Deck_Swabbie(Minion):
     type = "Pirate"
     base_attack = 2
     base_health = 2
-
+    
     def __init__(self, player):
         super().__init__(player)
 
@@ -258,6 +258,16 @@ class Scallywag(Minion):
     type = "Pirate"
     base_attack = 2
     base_health = 1
+
+    def __init__(self, player):
+        super().__init__(player)
+
+class Acolyte_of_CThun(Minion):
+    name = "Acolyte of C'Thun"
+    tavern_tier = 1
+    type = "None"
+    base_attack = 2
+    base_health = 2
 
     def __init__(self, player):
         super().__init__(player)

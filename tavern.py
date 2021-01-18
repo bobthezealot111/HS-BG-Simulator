@@ -10,15 +10,18 @@ class Tavern:
         self.minions = []
         self.tier = 1
         self.upgrade_cost = self.upgrade_base_costs[self.tier]
-        self.is_frozen = False
+        self.frozen_minions = []
         self.refresh()
 
     def refresh(self):
         self.minions = []
+        self.frozen_minions = []
         for _ in range(self.tavern_sizes[self.tier]):
             self.minions.append(self.random_minion())
 
     def refresh_after_frozen(self):
+        self.minions = self.frozen_minions
+        self.frozen_minions = []
         for _ in range(self.tavern_sizes[self.tier] - len(self.minions)):
             self.minions.append(self.random_minion())
 
@@ -30,10 +33,9 @@ class Tavern:
             self.upgrade_cost -= 1
             if self.upgrade_cost < 0:
                 self.upgrade_cost = 0
-        if not self.is_frozen:
+        if len(self.frozen_minions) == 0:
             self.refresh()
         else:
-            self.is_frozen = False
             self.refresh_after_frozen()
 
     def remove_minion(self, tavern_index):
@@ -41,7 +43,10 @@ class Tavern:
         return minion
 
     def toggle_freeze(self):
-        self.is_frozen = not self.is_frozen
+        if len(self.frozen_minions) == 0:
+            self.frozen_minions = self.minions
+        else:
+            self.frozen_minions = []
 
     def upgrade(self):
         self.tier += 1

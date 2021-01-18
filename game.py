@@ -5,14 +5,21 @@ from minion import *
 class Game:
     # Index is tier, index 0 is undefined
     minion_pool_size = [None, 16, 15, 13, 11, 9, 7]
+    minion_types = ["Beast", "Demon", "Dragon", "Elemental", "Mech", "Murloc", "Pirate"]
 
     def __init__(self):
         self.players = []
 
+        self.banned_minion_types = random.sample(set(self.minion_types), 2)
+        print(f"Banned minion types: {self.banned_minion_types}")
+
         self.minion_pool = {}
         for cls in Minion.__subclasses__():
-            self.minion_pool[cls.name] = self.minion_pool_size[cls.tavern_tier]
-            # print(f"{cls.name} {self.minion_pool[cls.name]}")
+            if cls.name == "Wrath Weaver" and "Demon" in self.banned_minion_types:
+                continue
+            if cls.type not in self.banned_minion_types:
+                self.minion_pool[cls.name] = self.minion_pool_size[cls.tavern_tier]
+                # print(f"{cls.name} {self.minion_pool[cls.name]}")
 
     def add_player(self):
         player = Player(self)
