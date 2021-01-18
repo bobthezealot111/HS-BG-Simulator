@@ -1,6 +1,7 @@
 import random
 from player import Player
 from minion import *
+from combat import combat
 
 class Game:
     # Index is tier, index 0 is undefined
@@ -9,6 +10,7 @@ class Game:
 
     def __init__(self):
         self.players = []
+        self.players_ended_turn = []
 
         self.banned_minion_types = random.sample(set(self.minion_types), 2)
         print(f"Banned minion types: {self.banned_minion_types}")
@@ -21,10 +23,19 @@ class Game:
                 self.minion_pool[cls.name] = self.minion_pool_size[cls.tavern_tier]
                 # print(f"{cls.name} {self.minion_pool[cls.name]}")
 
-    def add_player(self):
-        player = Player(self)
+    def add_player(self, name):
+        player = Player(self, name)
         self.players.append(player)
         return player
+
+    def player_end_turn(self, player):
+        self.players_ended_turn.append(player)
+        if len(self.players_ended_turn) == len(self.players):
+            combat(self.players[0], self.players[1])
+
+            for player in self.players:
+                player.start_turn()
+            self.players_ended_turn = []
 
     def get_minion_class(self, name):
         for cls in Minion.__subclasses__():

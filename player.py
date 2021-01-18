@@ -3,8 +3,9 @@ from board import Board
 from hand import Hand
 
 class Player:
-    def __init__(self, game):
+    def __init__(self, game, name):
         self.game = game
+        self.name = name
         self.tavern = Tavern(self)
         self.board = Board(self)
         self.hand = Hand(self)
@@ -16,13 +17,16 @@ class Player:
         self.free_refreshs = 0
 
     def print_summary(self):
-        print(f"Turn {self.turn}; {self.gold}/{self.max_gold} gold; Tavern {self.tavern.tier}" + (f" {len(self.tavern.frozen_minions)}/{len(self.tavern.minions)} frozen" if len(self.tavern.frozen_minions) > 0 else "") + (f", {self.tavern.upgrade_cost} gold upgrade" if self.tavern.tier < 6 else ""))
+        print(f"{self.name}: Turn {self.turn}; {self.gold}/{self.max_gold} gold; Tavern {self.tavern.tier}" + (f" {len(self.tavern.frozen_minions)}/{len(self.tavern.minions)} frozen" if len(self.tavern.frozen_minions) > 0 else "") + (f", {self.tavern.upgrade_cost} gold upgrade" if self.tavern.tier < 6 else ""))
         print("Tavern: " + ", ".join([str(minion) for minion in self.tavern.minions]))
         print("Board: " + ", ".join([str(minion) for minion in self.board.minions]))
         print("Hand: " + ", ".join([str(minion) for minion in self.hand.minions]))
 
-    def next_turn(self):
+    def end_turn(self):
         self.board.trigger_end_turn()
+        self.game.player_end_turn(self)
+
+    def start_turn(self):
         self.turn += 1
         self.max_gold += 1
         if self.max_gold > 10:
