@@ -6,20 +6,20 @@ from combat import combat
 class Game:
     # Index is tier, index 0 is undefined
     minion_pool_size = [None, 16, 15, 13, 11, 9, 7]
-    minion_types = ["Beast", "Demon", "Dragon", "Elemental", "Mech", "Murloc", "Pirate"]
+    minion_tribes = ["Beast", "Demon", "Dragon", "Elemental", "Mech", "Murloc", "Pirate"]
 
     def __init__(self):
         self.players = []
         self.players_ended_turn = []
 
-        self.banned_minion_types = random.sample(set(self.minion_types), 2)
-        print(f"Banned minion types: {self.banned_minion_types}")
+        self.banned_minion_tribes = random.sample(set(self.minion_tribes), 2)
+        print(f"Banned minion tribes: {self.banned_minion_tribes}")
 
         self.minion_pool = {}
         for cls in Minion.__subclasses__():
-            if cls.name == "Wrath Weaver" and "Demon" in self.banned_minion_types:
+            if cls.name == "Wrath Weaver" and "Demon" in self.banned_minion_tribes:
                 continue
-            if cls.type not in self.banned_minion_types:
+            if cls.tribe not in self.banned_minion_tribes:
                 self.minion_pool[cls.name] = self.minion_pool_size[cls.tavern_tier]
                 # print(f"{cls.name} {self.minion_pool[cls.name]}")
 
@@ -29,7 +29,8 @@ class Game:
         return player
 
     def player_end_turn(self, player):
-        self.players_ended_turn.append(player)
+        if player not in self.players_ended_turn:
+            self.players_ended_turn.append(player)
         if len(self.players_ended_turn) == len(self.players):
             combat(self.players[0], self.players[1])
 

@@ -4,11 +4,9 @@ from player import Player
 from minion import *
 
 def combat(player1, player2):
-    player1_minions = copy.deepcopy(player1.board.minions)
-    player2_minions = copy.deepcopy(player2.board.minions)
     print()
-    print(f"Combat player1: " + ", ".join([str(minion) for minion in player1_minions]))
-    print(f"Combat player2: " + ", ".join([str(minion) for minion in player2_minions]))
+    print(f"Combat player1: " + ", ".join([str(minion) for minion in player1.board.minions]))
+    print(f"Combat player2: " + ", ".join([str(minion) for minion in player2.board.minions]))
 
     # id 0 is player1, id 1 is player2
     num_combats = 1000
@@ -18,14 +16,23 @@ def combat(player1, player2):
     for game in range(num_combats):
         which_players_turn = random.randint(0, 1)
         enemy_player = 1 if which_players_turn == 0 else 0
+        player1_minions = copy.deepcopy(player1.board.minions)
+        player2_minions = copy.deepcopy(player2.board.minions)
         minions_alive = [player1_minions, player2_minions]
-        minions_that_havent_attacked_this_round = [list(range(len(minions_alive[0]))), list(range(len(minions_alive[1])))]
+
+        for player in [0, 1]:
+            for minion in minions_alive[player]:
+                minion.start_combat()
 
         while True:
             if len(minions_alive[which_players_turn]) == 0 or len(minions_alive[enemy_player]) == 0:
                 break
 
-            minion_thats_attacking = minions_alive[which_players_turn][minions_that_havent_attacked_this_round[which_players_turn][0]]
+            minion_thats_attacking = None
+            for minion in minions_alive[which_players_turn]:
+                if not minion.attacked_this_round:
+                    minion_thats_attacking = minion
+                    break
 
             enemies_with_taunt = []
             for enemy_minion in minions_alive[enemy_player]:
@@ -39,6 +46,7 @@ def combat(player1, player2):
 
             summary = f"{str(minion_thats_attacking)} attacked {str(enemy_target)}"
 
+            minions_died = []
             for take_damage_minion in [[minion_thats_attacking, enemy_target, which_players_turn], [enemy_target, minion_thats_attacking, enemy_player]]:
                 if take_damage_minion[0].divine_shield and take_damage_minion[1].attack > 0:
                     take_damage_minion[0].divine_shield = False
@@ -47,11 +55,19 @@ def combat(player1, player2):
                     take_damage_minion[0].health -= take_damage_minion[1].attack
                     if take_damage_minion[0].health <= 0:
                         minions_alive[take_damage_minion[2]].remove(take_damage_minion[0])
+                        minions_died.append(take_damage_minion)
                         summary += f", {str(take_damage_minion[0])} died"
 
             summary += f", now {str(minion_thats_attacking)} and {str(enemy_target)}"
+
+            for take_damage_minion in minions_died:
+                for minion in minions_alive[take_damage_minion[2]]:
+                    minion.other_minion_die(take_damage_minion[0])
+
             if display_first_fight:
                 print(summary)
+
+            minion_thats_attacking.attacked_this_round = True
 
             which_players_turn = 1 if which_players_turn == 0 else 0
             enemy_player = 1 if which_players_turn == 0 else 0

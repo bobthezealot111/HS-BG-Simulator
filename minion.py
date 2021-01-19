@@ -33,10 +33,19 @@ class Minion:
     def end_turn(self):
         return
 
+    # During combat
+
+    def start_combat(self):
+        self.attacked_this_round = False
+        return
+
+    def other_minion_die(self, minion):
+        return
+
 class Alleycat(Minion):
     name = "Alleycat"
     tavern_tier = 1
-    type = "Beast"
+    tribe = "Beast"
     base_attack = 1
     base_health = 1
 
@@ -50,7 +59,7 @@ class Alleycat(Minion):
 class Tabbycat(Minion):
     name = "Tabbycat"
     tavern_tier = 1
-    type = "Beast"
+    tribe = "Beast"
     base_attack = 1
     base_health = 1
 
@@ -63,17 +72,23 @@ class Tabbycat(Minion):
 class Scavenging_Hyena(Minion):
     name = "Scavenging Hyena"
     tavern_tier = 1
-    type = "Beast"
+    tribe = "Beast"
     base_attack = 2
     base_health = 2
 
     def __init__(self, player):
         super().__init__(player)
 
+    def other_minion_die(self, minion):
+        super().other_minion_die(minion)
+        if minion.tribe == "Beast":
+            self.attack += 2
+            self.health += 1
+
 class Fiendish_Servant(Minion):
     name = "Fiendish Servant"
     tavern_tier = 1
-    type = "Demon"
+    tribe = "Demon"
     base_attack = 2
     base_health = 1
 
@@ -83,7 +98,7 @@ class Fiendish_Servant(Minion):
 class Vulgar_Homunculus(Minion):
     name = "Vulgar Homunculus"
     tavern_tier = 1
-    type = "Demon"
+    tribe = "Demon"
     base_attack = 2
     base_health = 4
 
@@ -99,7 +114,7 @@ class Vulgar_Homunculus(Minion):
 class Wrath_Weaver(Minion):
     name = "Wrath Weaver"
     tavern_tier = 1
-    type = "None"
+    tribe = "None"
     base_attack = 1
     base_health = 3
 
@@ -108,7 +123,7 @@ class Wrath_Weaver(Minion):
 
     def play_other_minion(self, minion):
         super().play_other_minion(minion)
-        if minion.type == "Demon":
+        if minion.tribe == "Demon":
             self.player.take_damage(1)
             self.attack += 2
             self.health += 2
@@ -116,7 +131,7 @@ class Wrath_Weaver(Minion):
 class Dragonspawn_Lieutenant(Minion):
     name = "Dragonspawn Lieutenant"
     tavern_tier = 1
-    type = "Dragon"
+    tribe = "Dragon"
     base_attack = 2
     base_health = 3
 
@@ -128,7 +143,7 @@ class Dragonspawn_Lieutenant(Minion):
 class Red_Whelp(Minion):
     name = "Red Whelp"
     tavern_tier = 1
-    type = "Dragon"
+    tribe = "Dragon"
     base_attack = 1
     base_health = 2
 
@@ -138,7 +153,7 @@ class Red_Whelp(Minion):
 class Refreshing_Anomaly(Minion):
     name = "Refreshing Anomaly"
     tavern_tier = 1
-    type = "Elemental"
+    tribe = "Elemental"
     base_attack = 1
     base_health = 3
 
@@ -153,7 +168,7 @@ class Refreshing_Anomaly(Minion):
 class Sellemental(Minion):
     name = "Sellemental"
     tavern_tier = 1
-    type = "Elemental"
+    tribe = "Elemental"
     base_attack = 2
     base_health = 2
 
@@ -167,7 +182,7 @@ class Sellemental(Minion):
 class Water_Droplet(Minion):
     name = "Water Droplet"
     tavern_tier = 1
-    type = "Elemental"
+    tribe = "Elemental"
     base_attack = 2
     base_health = 2
 
@@ -179,7 +194,7 @@ class Water_Droplet(Minion):
 class Micro_Machine(Minion):
     name = "Micro Machine"
     tavern_tier = 1
-    type = "Mech"
+    tribe = "Mech"
     base_attack = 1
     base_health = 2
 
@@ -193,7 +208,7 @@ class Micro_Machine(Minion):
 class Micro_Mummy(Minion):
     name = "Micro Mummy"
     tavern_tier = 1
-    type = "Mech"
+    tribe = "Mech"
     base_attack = 1
     base_health = 2
 
@@ -217,7 +232,7 @@ class Micro_Mummy(Minion):
 class Murloc_Tidecaller(Minion):
     name = "Murloc Tidecaller"
     tavern_tier = 1
-    type = "Murloc"
+    tribe = "Murloc"
     base_attack = 1
     base_health = 2
 
@@ -226,13 +241,13 @@ class Murloc_Tidecaller(Minion):
 
     def summon_other_minion(self, minion):
         super().summon_other_minion(minion)
-        if minion.type == "Murloc":
+        if minion.tribe == "Murloc":
             self.attack += 1
 
 class Murloc_Tidehunter(Minion):
     name = "Murloc Tidehunter"
     tavern_tier = 1
-    type = "Murloc"
+    tribe = "Murloc"
     base_attack = 2
     base_health = 1
 
@@ -246,7 +261,7 @@ class Murloc_Tidehunter(Minion):
 class Murloc_Scout(Minion):
     name = "Murloc Scout"
     tavern_tier = 1
-    type = "Murloc"
+    tribe = "Murloc"
     base_attack = 1
     base_health = 1
 
@@ -258,7 +273,7 @@ class Murloc_Scout(Minion):
 class Rockpool_Hunter(Minion):
     name = "Rockpool Hunter"
     tavern_tier = 1
-    type = "Murloc"
+    tribe = "Murloc"
     base_attack = 2
     base_health = 3
 
@@ -268,7 +283,7 @@ class Rockpool_Hunter(Minion):
 class Deck_Swabbie(Minion):
     name = "Deck Swabbie"
     tavern_tier = 1
-    type = "Pirate"
+    tribe = "Pirate"
     base_attack = 2
     base_health = 2
 
@@ -284,7 +299,7 @@ class Deck_Swabbie(Minion):
 class Scallywag(Minion):
     name = "Scallywag"
     tavern_tier = 1
-    type = "Pirate"
+    tribe = "Pirate"
     base_attack = 2
     base_health = 1
 
@@ -294,7 +309,7 @@ class Scallywag(Minion):
 class Acolyte_of_CThun(Minion):
     name = "Acolyte of C'Thun"
     tavern_tier = 1
-    type = "None"
+    tribe = "None"
     base_attack = 2
     base_health = 2
 
